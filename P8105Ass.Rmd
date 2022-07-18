@@ -1,0 +1,93 @@
+---
+title: "Basic statistics assignment"
+author: "Eric Anjeo"
+date: "10/11/2020"
+always_allow_html: true
+output: github_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message = F,warning = F)
+```
+
+
+####  [Link](https://github.com/Museve/p8105_hw1_eriq21)
+
+### ***Problem 0.1***
+   + random sample of size 10 from a standard Normal distribution
+```{r}
+set.seed(1234)#for producing same results
+x=rnorm(10);
+x
+```
+
+### ***Problem 0.1***
+   + a logical vector indicating whether elements of the sample are greater than 0
+```{r}
+x>0
+```
+
+### ***Problem 0.1***
+   + a character vector of length 10
+```{r}
+chavec=c("one","two","three","four","five","six","seven","eight","nine","ten")
+length(chavec)
+```
+   
+### ***Problem 0.1***
+   + a a factor vector of length 10, with 3 different factor “levels”
+```{r}
+facvec=as.factor(c(rep("male",3),rep("female",4),rep("both",3)))
+levels(facvec)
+```
+  
+***dataframe***
+
+```{r}
+dt=data.frame(x=x,charve=chavec,facvec=facvec)
+mean(dt$x)
+```
+The only mean that we get is for the numeric variable x. The other two (character and factor) generate errors when called.
+
+
+### ***Problem 2: palmerpenguins***
+```{r}
+library(dplyr) # data cleaning package
+library(corrplot) # for correlation plot
+library(GGally) #
+library(psych)
+data("penguins", package = "palmerpenguins")#reading in the required data
+df=penguins#assigning a new name to it
+cat("The data has",dim(df)[1],"rows","and",dim(df)[2],"columns")
+colnames(df)#it gives the columns names
+#Summary stats
+summary(penguins)
+#plots
+psych::pairs.panels(penguins)
+```
+
+### we drop empty observations in sex variable
+```{r}
+penguins <- penguins %>% filter(sex == 'male' | sex == 'female')
+summary(penguins)
+```
+
+```{r}
+penguins %>% group_by(species) %>% tally()
+```
+
+```{r}
+penguins %>%group_by(species) %>% summarise_if(is.numeric, funs(mean,median)) %>% knitr::kable()
+```
+
+
+### Penguins distributions
+```{r}
+table(penguins$species, penguins$island)
+chisq.test(table(penguins$species, penguins$island)) # meaningful difference
+ggplot(penguins, aes(x = island, y = species, color = species)) +
+  geom_jitter(size = 3)  +ggtitle('Penguins by Island')
+```
+
+
